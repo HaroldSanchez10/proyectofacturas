@@ -1,0 +1,63 @@
+<?php
+
+// Conexión a la base de datos con manejo de excepciones
+try {
+    // Conexión a la base de datos 'facturacion_db'
+    $mysqli = new mysqli("localhost", "root", "", "dbFacturas");
+    if ($mysqli->connect_error) {
+        throw new Exception("Error de conexión: " . $mysqli->connect_error);
+    }
+} catch (Exception $e) {
+    die("<strong>Excepción capturada:</strong> " . $e->getMessage());
+}
+
+// Función para ejecutar consultas seguras con manejo de excepciones
+function ejecutarConsulta($sql, $params = []) {
+    global $mysqli;
+    try {
+        // Preparación de la consulta SQL
+        $stmt = $mysqli->prepare($sql);
+        if (!$stmt) {
+            throw new Exception("Error en la preparación de la consulta: " . $mysqli->error);
+        }
+        // Enlace de parámetros, si se proporcionan
+        if (!empty($params)) {
+            $stmt->bind_param(...$params);
+        }
+        // Ejecución de la consulta
+        $stmt->execute();
+        return $stmt;
+    } catch (Exception $e) {
+        echo "<strong>Error:</strong> " . $e->getMessage();
+        return false;
+    }
+}
+
+// ------------------------- CRUD PARA CLIENTE -------------------------
+
+// Crear Cliente
+function crearCliente($codigo, $nombre, $email, $telefono, $credito) {
+    // Inserta un nuevo cliente en la base de datos
+    return ejecutarConsulta("INSERT INTO clientes (codigo, nombre, email, telefono, credito) VALUES (?, ?, ?, ?, ?)", ["issss", $codigo, $nombre, $email, $telefono, $credito]);
+}
+
+// Obtener todos los clientes
+function obtenerClientes() {
+    // Recupera todos los clientes de la base de datos
+    return ejecutarConsulta("SELECT * FROM clientes")->get_result()->fetch_all(MYSQLI_ASSOC);
+}
+
+// Actualizar Cliente
+function actualizarCliente($codigo, $nombre, $email, $telefono, $credito) {
+    // Actualiza los datos de un cliente por su código
+    return ejecutarConsulta("UPDATE clientes SET nombre=?, email=?, telefono=?, credito=? WHERE codigo=?", ["sssss", $nombre, $email, $telefono, $credito, $codigo]);
+}
+
+// Eliminar Cliente
+function eliminarCliente($codigo) {
+    // Elimina un cliente de la base de datos por su código
+    return ejecutarConsulta("DELETE FROM clientes WHERE codigo=?", ["i", $codigo]);
+}
+
+// ------------------------- FIN CRUD PARA CLIENTE -------------------------
+?>

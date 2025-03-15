@@ -1,0 +1,45 @@
+<?php
+// Conexión a la base de datos con manejo de excepciones
+try {
+    $mysqli = new mysqli("localhost", "root", "", "dbFacturas");
+    if ($mysqli->connect_error) {
+        throw new Exception("Error de conexión: " . $mysqli->connect_error);
+    }
+} catch (Exception $e) {
+    die("<strong>Excepción capturada:</strong> " . $e->getMessage());
+}
+
+// Función para ejecutar consultas seguras
+function ejecutarConsulta($sql, $params = []) {
+    global $mysqli;
+    try {
+        $stmt = $mysqli->prepare($sql);
+        if (!$stmt) {
+            throw new Exception("Error en la preparación de la consulta: " . $mysqli->error);
+        }
+        if (!empty($params)) {
+            $stmt->bind_param(...$params);
+        }
+        $stmt->execute();
+        return $stmt;
+    } catch (Exception $e) {
+        echo "<strong>Error:</strong> " . $e->getMessage();
+        return false;
+    }
+}
+function crearProducto($codigo, $nombre, $stock, $valorUnitario) {
+    return ejecutarConsulta("INSERT INTO productos (codigo, nombre, stock, valor_unitario) VALUES (?, ?, ?, ?)", ["isid", $codigo, $nombre, $stock, $valorUnitario]);
+}
+
+function obtenerProductos() {
+    return ejecutarConsulta("SELECT * FROM productos")->get_result()->fetch_all(MYSQLI_ASSOC);
+}
+
+function actualizarProducto($codigo, $nombre, $stock, $valorUnitario) {
+    return ejecutarConsulta("UPDATE productos SET nombre=?, stock=?, valor_unitario=? WHERE codigo=?", ["sidi", $nombre, $stock, $valorUnitario, $codigo]);
+}
+
+function eliminarProducto($codigo) {
+    return ejecutarConsulta("DELETE FROM productos WHERE codigo=?", ["i", $codigo]);
+}
+?>

@@ -1,0 +1,62 @@
+<?php
+// Conexión a la base de datos con manejo de excepciones
+try {
+    // Conexión a la base de datos 'facturacion_db'
+    $mysqli = new mysqli("localhost", "root", "", "dbFacturas");
+    if ($mysqli->connect_error) {
+        throw new Exception("Error de conexión: " . $mysqli->connect_error);
+    }
+} catch (Exception $e) {
+    die("<strong>Excepción capturada:</strong> " . $e->getMessage());
+}
+
+// Función para ejecutar consultas seguras con manejo de excepciones
+function ejecutarConsulta($sql, $params = []) {
+    global $mysqli;
+    try {
+        // Preparación de la consulta SQL
+        $stmt = $mysqli->prepare($sql);
+        if (!$stmt) {
+            throw new Exception("Error en la preparación de la consulta: " . $mysqli->error);
+        }
+        // Enlace de parámetros, si se proporcionan
+        if (!empty($params)) {
+            $stmt->bind_param(...$params);
+        }
+        // Ejecución de la consulta
+        $stmt->execute();
+        return $stmt;
+    } catch (Exception $e) {
+        echo "<strong>Error:</strong> " . $e->getMessage();
+        return false;
+    }
+}
+
+// ------------------------- CRUD PARA EMPRESA -------------------------
+
+// Crear Empresa
+function crearEmpresa($codigo, $nombre) {
+    // Inserta una nueva empresa en la base de datos
+    return ejecutarConsulta("INSERT INTO empresas (codigo, nombre) VALUES (?, ?)", ["is", $codigo, $nombre]);
+}
+
+// Obtener todas las empresas
+function obtenerEmpresas() {
+    // Recupera todas las empresas de la base de datos
+    return ejecutarConsulta("SELECT * FROM empresas")->get_result()->fetch_all(MYSQLI_ASSOC);
+}
+
+// Actualizar Empresa
+function actualizarEmpresa($codigo, $nombre) {
+    // Actualiza los datos de una empresa por su código
+    return ejecutarConsulta("UPDATE empresas SET nombre=? WHERE codigo=?", ["si", $nombre, $codigo]);
+}
+
+// Eliminar Empresa
+function eliminarEmpresa($codigo) {
+    // Elimina una empresa de la base de datos por su código
+    return ejecutarConsulta("DELETE FROM empresas WHERE codigo=?", ["i", $codigo]);
+}
+
+// ------------------------- FIN CRUD PARA EMPRESA -------------------------
+?>

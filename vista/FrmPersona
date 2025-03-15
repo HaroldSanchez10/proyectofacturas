@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GestióndePersonas</title>
+</head>
+<body>
+    <h1>Gestión de Personas</h1>
+
+    <!-- Sección para agregar una nueva persona -->
+    <h2>Agregar Persona</h2>
+    <form method="post">
+        <label for="codigo">Código:</label>
+        <input type="number" name="codigo" id="codigo" required><br>
+        
+        <label for="nombre">Nombre:</label>
+        <input type="text" name="nombre" id="nombre" required><br>
+        
+        <label for="email">Email:</label>
+        <input type="email" name="email" id="email" required><br>
+        
+        <label for="telefono">Teléfono:</label>
+        <input type="text" name="telefono" id="telefono" required><br>
+        
+        <button type="submit" name="agregar">Agregar Persona</button>
+    </form>
+
+    <?php
+    // Lógica para agregar una persona
+    if (isset($_POST['agregar'])) {
+        // Recibimos los datos del formulario
+        $codigo = $_POST['codigo'];
+        $nombre = $_POST['nombre'];
+        $email = $_POST['email'];
+        $telefono = $_POST['telefono'];
+        
+        // Llamamos a la función para crear la persona en la base de datos
+        crearPersona($codigo, $nombre, $email, $telefono);
+        echo "<p>Persona agregada exitosamente.</p>";
+    }
+    ?>
+
+    <!-- Sección para mostrar todas las personas -->
+    <h2>Lista de Personas</h2>
+    <table border="1">
+        <tr>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Teléfono</th>
+            <th>Acciones</th>
+        </tr>
+        <?php
+        // Obtener todas las personas
+        foreach (obtenerPersonas() as $persona) {
+        ?>
+        <tr>
+            <td><?= $persona['codigo'] ?></td>
+            <td><?= $persona['nombre'] ?></td>
+            <td><?= $persona['email'] ?></td>
+            <td><?= $persona['telefono'] ?></td>
+            <td>
+                <!-- Enlace para editar la persona -->
+                <a href="editar.php?codigo=<?= $persona['codigo'] ?>">Editar</a> |
+                <!-- Enlace para eliminar la persona -->
+                <a href="eliminar.php?codigo=<?= $persona['codigo'] ?>">Eliminar</a>
+            </td>
+        </tr>
+        <?php } ?>
+    </table>
+
+    <h1>Editar Persona</h1>
+
+<!-- Formulario para editar los datos de la persona -->
+<form method="post">
+    <label for="codigo">Código:</label>
+    <input type="number" name="codigo" value="<?= $persona['codigo'] ?>" readonly><br>
+    
+    <label for="nombre">Nombre:</label>
+    <input type="text" name="nombre" value="<?= $persona['nombre'] ?>" required><br>
+    
+    <label for="email">Email:</label>
+    <input type="email" name="email" value="<?= $persona['email'] ?>" required><br>
+    
+    <label for="telefono">Teléfono:</label>
+    <input type="text" name="telefono" value="<?= $persona['telefono'] ?>" required><br>
+    
+    <button type="submit" name="editar">Actualizar Persona</button>
+</form>
+
+</body>
+</html>

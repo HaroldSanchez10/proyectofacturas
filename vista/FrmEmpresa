@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Empresas</title>
+</head>
+<body>
+    <h1>Gestión de Empresas</h1>
+
+    <!-- Sección para agregar una nueva empresa -->
+    <h2>Agregar Empresa</h2>
+    <form method="post">
+        <label for="codigo">Código:</label>
+        <input type="number" name="codigo" id="codigo" required><br>
+        
+        <label for="nombre">Nombre:</label>
+        <input type="text" name="nombre" id="nombre" required><br>
+        
+        <button type="submit" name="agregar">Agregar Empresa</button>
+    </form>
+
+    <?php
+    // Lógica para agregar una empresa
+    if (isset($_POST['agregar'])) {
+        // Recibimos los datos del formulario
+        $codigo = $_POST['codigo'];
+        $nombre = $_POST['nombre'];
+        
+        // Llamamos a la función para crear la empresa en la base de datos
+        crearEmpresa($codigo, $nombre);
+        echo "<p>Empresa agregada exitosamente.</p>";
+    }
+    ?>
+
+
+    
+    <!-- Sección para mostrar todas las empresas -->
+    <h2>Lista de Empresas</h2>
+    <table border="1">
+        <tr>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Acciones</th>
+        </tr>
+        <?php
+        // Obtener todas las empresas
+        foreach (obtenerEmpresas() as $empresa) {
+        ?>
+        <tr>
+            <td><?= $empresa['codigo'] ?></td>
+            <td><?= $empresa['nombre'] ?></td>
+            <td>
+                <!-- Enlace para editar la empresa -->
+                <a href="editar_empresa.php?codigo=<?= $empresa['codigo'] ?>">Editar</a> |
+                <!-- Enlace para eliminar la empresa -->
+                <a href="eliminar_empresa.php?codigo=<?= $empresa['codigo'] ?>">Eliminar</a>
+            </td>
+        </tr>
+        <?php } ?>
+    </table>
+
+</body>
+</html>
+
+<!-- archivo editar_empresa.php -->
+<?php
+if (isset($_GET['codigo'])) {
+    $codigo = $_GET['codigo'];
+    // Obtener los datos de la empresa
+    $empresa = ejecutarConsulta("SELECT * FROM empresas WHERE codigo=?", ["i", $codigo])->get_result()->fetch_assoc();
+}
+
+if (isset($_POST['editar'])) {
+    $codigo = $_POST['codigo'];
+    $nombre = $_POST['nombre'];
+    
+    // Actualizar los datos de la empresa
+    actualizarEmpresa($codigo, $nombre);
+    echo "<p>Empresa actualizada exitosamente.</p>";
+}
+?>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Empresa</title>
+</head>
+<body>
+    <h1>Editar Empresa</h1>
+
+    <!-- Formulario para editar los datos de la empresa -->
+    <form method="post">
+        <label for="codigo">Código:</label>
+        <input type="number" name="codigo" value="<?= $empresa['codigo'] ?>" readonly><br>
+        
+        <label for="nombre">Nombre:</label>
+        <input type="text" name="nombre" value="<?= $empresa['nombre'] ?>" required><br>
+        
+        <button type="submit" name="editar">Actualizar Empresa</button>
+    </form>
+
+</body>
+</html>
+
+
+<!-- archivo eliminar_empresa.php -->
+<?php
+if (isset($_GET['codigo'])) {
+    $codigo = $_GET['codigo'];
+    // Eliminar la empresa por su código
+    eliminarEmpresa($codigo);
+    echo "<p>Empresa eliminada exitosamente.</p>";
+}
+?>

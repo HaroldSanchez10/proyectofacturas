@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Productos por Factura</title>
+</head>
+<body>
+    <h1>Gestión de Productos por Factura</h1>
+    <h2>Agregar Producto a Factura</h2>
+    <form method="post">
+        <label for="numeroFactura">Número de Factura:</label>
+        <input type="number" name="numeroFactura" required><br>
+        <label for="codigoProducto">Código del Producto:</label>
+        <input type="number" name="codigoProducto" required><br>
+        <label for="cantidad">Cantidad:</label>
+        <input type="number" name="cantidad" required><br>
+        <label for="subtotal">Subtotal:</label>
+        <input type="text" name="subtotal" required><br>
+        <button type="submit" name="agregar">Agregar Producto</button>
+    </form>
+
+    <h2>Lista de Productos por Factura</h2>
+    <table border="1">
+        <tr><th>Número de Factura</th><th>Código de Producto</th><th>Cantidad</th><th>Subtotal</th><th>Acciones</th></tr>
+        <?php foreach (obtenerProductosPorFactura() as $productoFactura) { ?>
+        <tr>
+            <td><?= $productoFactura['numero_factura'] ?></td>
+            <td><?= $productoFactura['codigo_producto'] ?></td>
+            <td><?= $productoFactura['cantidad'] ?></td>
+            <td><?= $productoFactura['subtotal'] ?></td>
+            <td>
+                <a href="eliminar_producto_factura.php?id=<?= $productoFactura['id'] ?>">Eliminar</a>
+            </td>
+        </tr>
+        <?php } ?>
+    </table>
+</body>
+</html>

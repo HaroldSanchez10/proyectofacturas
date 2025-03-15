@@ -1,0 +1,102 @@
+<?php
+// Conexión a la base de datos con manejo de excepciones
+try {
+    // Conexión a la base de datos 'facturacion_db'
+    $mysqli = new mysqli("localhost", "root", "", "dbFacturas");
+    if ($mysqli->connect_error) {
+        throw new Exception("Error de conexión: " . $mysqli->connect_error);
+    }
+} catch (Exception $e) {
+    die("<strong>Excepción capturada:</strong> " . $e->getMessage());
+}
+
+// Función para ejecutar consultas seguras con manejo de excepciones
+function ejecutarConsulta($sql, $params = []) {
+    global $mysqli;
+    try {
+        // Preparación de la consulta SQL
+        $stmt = $mysqli->prepare($sql);
+        if (!$stmt) {
+            throw new Exception("Error en la preparación de la consulta: " . $mysqli->error);
+        }
+        // Enlace de parámetros, si se proporcionan
+        if (!empty($params)) {
+            $stmt->bind_param(...$params);
+        }
+        // Ejecución de la consulta
+        $stmt->execute();
+        return $stmt;
+    } catch (Exception $e) {
+        echo "<strong>Error:</strong> " . $e->getMessage();
+        return false;
+    }
+}
+
+// ------------------------- CRUD PARA PERSONA -------------------------
+
+// Crear Persona
+function crearPersona($codigo, $nombre, $email, $telefono) {
+    // Inserta una nueva persona en la base de datos
+    return ejecutarConsulta("INSERT INTO personas (codigo, nombre, email, telefono) VALUES (?, ?, ?, ?)", ["isss", $codigo, $nombre, $email, $telefono]);
+}
+
+// Obtener todas las personas
+function obtenerPersonas() {
+    // Recupera todas las personas de la base de datos
+    return ejecutarConsulta("SELECT * FROM personas")->get_result()->fetch_all(MYSQLI_ASSOC);
+}
+
+// Actualizar Persona
+function actualizarPersona($codigo, $nombre, $email, $telefono) {
+    // Actualiza los datos de una persona por su código
+    return ejecutarConsulta("UPDATE personas SET nombre=?, email=?, telefono=? WHERE codigo=?", ["ssss", $nombre, $email, $telefono, $codigo]);
+}
+
+// Eliminar Persona
+function eliminarPersona($codigo) {
+    // Elimina una persona de la base de datos por su código
+    return ejecutarConsulta("DELETE FROM personas WHERE codigo=?", ["i", $codigo]);
+}
+
+// ------------------------- FIN CRUD PARA PERSONA -------------------------
+
+?>
+
+
+
+<!-- ------------------------- EDITAR PERSONA ------------------------- -->
+
+<?php
+// archivo editar.php
+if (isset($_GET['codigo'])) {
+    $codigo = $_GET['codigo'];
+    // Obtener los datos de la persona
+    $persona = ejecutarConsulta("SELECT * FROM personas WHERE codigo=?", ["i", $codigo])->get_result()->fetch_assoc();
+}
+
+if (isset($_POST['editar'])) {
+    $codigo = $_POST['codigo'];
+    $nombre = $_POST['nombre'];
+    $email = $_POST['email'];
+    $telefono = $_POST['telefono'];
+    
+    // Actualizar los datos de la persona
+    actualizarPersona($codigo, $nombre, $email, $telefono);
+    echo "<p>Persona actualizada exitosamente.</p>";
+}
+
+?>
+
+
+
+<!-- ------------------------- ELIMINAR PERSONA ------------------------- -->
+
+<?php
+// archivo eliminar.php
+if (isset($_GET['codigo'])) {
+    $codigo = $_GET['codigo'];
+    // Eliminar la persona por su código
+    eliminarPersona($codigo);
+    echo "<p>Persona eliminada exitosamente.</p>";
+}
+?>

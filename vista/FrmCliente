@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GestióndeClientes</title>
+</head>
+<body>
+    <h1>GestióndeClientes</h1>
+
+    <!-- Sección para agregar un nuevo cliente -->
+    <h2>Agregar Cliente</h2>
+    <form method="post">
+        <label for="codigo">Código:</label>
+        <input type="number" name="codigo" id="codigo" required><br>
+        
+        <label for="nombre">Nombre:</label>
+        <input type="text" name="nombre" id="nombre" required><br>
+        
+        <label for="email">Email:</label>
+        <input type="email" name="email" id="email" required><br>
+        
+        <label for="telefono">Teléfono:</label>
+        <input type="text" name="telefono" id="telefono" required><br>
+
+        <label for="credito">Crédito:</label>
+        <input type="number" name="credito" id="credito" required><br>
+        
+        <button type="submit" name="agregar">Agregar Cliente</button>
+    </form>
+
+    <?php
+    // Lógica para agregar un cliente
+    if (isset($_POST['agregar'])) {
+        // Recibimos los datos del formulario
+        $codigo = $_POST['codigo'];
+        $nombre = $_POST['nombre'];
+        $email = $_POST['email'];
+        $telefono = $_POST['telefono'];
+        $credito = $_POST['credito'];
+        
+        // Llamamos a la función para crear el cliente en la base de datos
+        crearCliente($codigo, $nombre, $email, $telefono, $credito);
+        echo "<p>Cliente agregado exitosamente.</p>";
+    }
+    ?>
+    <!-- Sección para mostrar todos los clientes -->
+    <h2>Lista de Clientes</h2>
+    <table border="1">
+        <tr>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Teléfono</th>
+            <th>Crédito</th>
+            <th>Acciones</th>
+        </tr>
+        <?php
+        // Obtener todos los clientes
+        foreach (obtenerClientes() as $cliente) {
+        ?>
+        <tr>
+            <td><?= $cliente['codigo'] ?></td>
+            <td><?= $cliente['nombre'] ?></td>
+            <td><?= $cliente['email'] ?></td>
+            <td><?= $cliente['telefono'] ?></td>
+            <td><?= $cliente['credito'] ?></td>
+            <td>
+                <!-- Enlace para editar el cliente -->
+                <a href="editar_cliente.php?codigo=<?= $cliente['codigo'] ?>">Editar</a> |
+                <!-- Enlace para eliminar el cliente -->
+                <a href="eliminar_cliente.php?codigo=<?= $cliente['codigo'] ?>">Eliminar</a>
+            </td>
+        </tr>
+        <?php } ?>
+    </table>
+
+</body>
+</html>
+
+<!-- archivo editar_cliente.php -->
+<?php
+if (isset($_GET['codigo'])) {
+    $codigo = $_GET['codigo'];
+    // Obtener los datos del cliente
+    $cliente = ejecutarConsulta("SELECT * FROM clientes WHERE codigo=?", ["i", $codigo])->get_result()->fetch_assoc();
+}
+
+if (isset($_POST['editar'])) {
+    $codigo = $_POST['codigo'];
+    $nombre = $_POST['nombre'];
+    $email = $_POST['email'];
+    $telefono = $_POST['telefono'];
+    $credito = $_POST['credito'];
+    
+    // Actualizar los datos del cliente
+    actualizarCliente($codigo, $nombre, $email, $telefono, $credito);
+    echo "<p>Cliente actualizado exitosamente.</p>";
+}
+?>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Cliente</title>
+</head>
+<body>
+    <h1>Editar Cliente</h1>
+
+    <!-- Formulario para editar los datos del cliente -->
+    <form method="post">
+        <label for="codigo">Código:</label>
+        <input type="number" name="codigo" value="<?= $cliente['codigo'] ?>" readonly><br>
+        
+        <label for="nombre">Nombre:</label>
+        <input type="text" name="nombre" value="<?= $cliente['nombre'] ?>" required><br>
+        
+        <label for="email">Email:</label>
+        <input type="email" name="email" value="<?= $cliente['email'] ?>" required><br>
+        
+        <label for="telefono">Teléfono:</label>
+        <input type="text" name="telefono" value="<?= $cliente['telefono'] ?>" required><br>
+
+        <label for="credito">Crédito:</label>
+        <input type="number" name="credito" value="<?= $cliente['credito'] ?>" required><br>
+        
+        <button type="submit" name="editar">Actualizar Cliente</button>
+    </form>
+
+</body>
+</html>
+
+ <!-- archivo eliminar_cliente.php -->
+<?php
+if (isset($_GET['codigo'])) {
+    $codigo = $_GET['codigo'];
+    // Eliminar el cliente por su código
+    eliminarCliente($codigo);
+    echo "<p>Cliente eliminado exitosamente.</p>";
+}
+?>

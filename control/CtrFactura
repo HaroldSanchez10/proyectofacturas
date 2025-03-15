@@ -1,0 +1,46 @@
+<?php
+// Conexión a la base de datos con manejo de excepciones
+try {
+    $mysqli = new mysqli("localhost", "root", "", "dbFacturas");
+    if ($mysqli->connect_error) {
+        throw new Exception("Error de conexión: " . $mysqli->connect_error);
+    }
+} catch (Exception $e) {
+    die("<strong>Excepción capturada:</strong> " . $e->getMessage());
+}
+
+// Función para ejecutar consultas seguras
+function ejecutarConsulta($sql, $params = []) {
+    global $mysqli;
+    try {
+        $stmt = $mysqli->prepare($sql);
+        if (!$stmt) {
+            throw new Exception("Error en la preparación de la consulta: " . $mysqli->error);
+        }
+        if (!empty($params)) {
+            $stmt->bind_param(...$params);
+        }
+        $stmt->execute();
+        return $stmt;
+    } catch (Exception $e) {
+        echo "<strong>Error:</strong> " . $e->getMessage();
+        return false;
+    }
+}
+// ------------------------- CRUD PARA FACTURA -------------------------
+function crearFactura($fecha, $numero, $total) {
+    return ejecutarConsulta("INSERT INTO facturas (fecha, numero, total) VALUES (?, ?, ?)", ["ssi", $fecha, $numero, $total]);
+}
+
+function obtenerFacturas() {
+    return ejecutarConsulta("SELECT * FROM facturas")->get_result()->fetch_all(MYSQLI_ASSOC);
+}
+
+function actualizarFactura($fecha, $numero, $total) {
+    return ejecutarConsulta("UPDATE facturas SET fecha=?, total=? WHERE numero=?", ["sii", $fecha, $total, $numero]);
+}
+
+function eliminarFactura($numero) {
+    return ejecutarConsulta("DELETE FROM facturas WHERE numero=?", ["s", $numero]);
+}
+?>

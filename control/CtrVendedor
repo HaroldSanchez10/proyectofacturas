@@ -1,0 +1,45 @@
+<?php
+// Conexión a la base de datos con manejo de excepciones
+try {
+    $mysqli = new mysqli("localhost", "root", "", "dbFacturas");
+    if ($mysqli->connect_error) {
+        throw new Exception("Error de conexión: " . $mysqli->connect_error);
+    }
+} catch (Exception $e) {
+    die("<strong>Excepción capturada:</strong> " . $e->getMessage());
+}
+
+// Función para ejecutar consultas seguras
+function ejecutarConsulta($sql, $params = []) {
+    global $mysqli;
+    try {
+        $stmt = $mysqli->prepare($sql);
+        if (!$stmt) {
+            throw new Exception("Error en la preparación de la consulta: " . $mysqli->error);
+        }
+        if (!empty($params)) {
+            $stmt->bind_param(...$params);
+        }
+        $stmt->execute();
+        return $stmt;
+    } catch (Exception $e) {
+        echo "<strong>Error:</strong> " . $e->getMessage();
+        return false;
+    }
+}
+function crearVendedor($codigo, $nombre, $email, $telefono, $carne, $direccion) {
+    return ejecutarConsulta("INSERT INTO vendedores (codigo, nombre, email, telefono, carne, direccion) VALUES (?, ?, ?, ?, ?, ?)", ["isssis", $codigo, $nombre, $email, $telefono, $carne, $direccion]);
+}
+
+function obtenerVendedores() {
+    return ejecutarConsulta("SELECT * FROM vendedores")->get_result()->fetch_all(MYSQLI_ASSOC);
+}
+
+function actualizarVendedor($codigo, $nombre, $email, $telefono, $carne, $direccion) {
+    return ejecutarConsulta("UPDATE vendedores SET nombre=?, email=?, telefono=?, carne=?, direccion=? WHERE codigo=?", ["sssssi", $nombre, $email, $telefono, $carne, $direccion, $codigo]);
+}
+
+function eliminarVendedor($codigo) {
+    return ejecutarConsulta("DELETE FROM vendedores WHERE codigo=?", ["i", $codigo]);
+}
+?>

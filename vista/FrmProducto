@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Productos</title>
+</head>
+<body>
+    <h1>Gestión de Productos</h1>
+    <h2>Agregar Producto</h2>
+    <form method="post">
+        <label for="codigo">Código:</label>
+        <input type="number" name="codigo" required><br>
+        <label for="nombre">Nombre:</label>
+        <input type="text" name="nombre" required><br>
+        <label for="stock">Stock:</label>
+        <input type="number" name="stock" required><br>
+        <label for="valorUnitario">Valor Unitario:</label>
+        <input type="text" name="valorUnitario" required><br>
+        <button type="submit" name="agregar">Agregar Producto</button>
+    </form>
+
+    <h2>Lista de Productos</h2>
+    <table border="1">
+        <tr><th>Código</th><th>Nombre</th><th>Stock</th><th>Valor Unitario</th><th>Acciones</th></tr>
+        <?php foreach (obtenerProductos() as $producto) { ?>
+        <tr>
+            <td><?= $producto['codigo'] ?></td>
+            <td><?= $producto['nombre'] ?></td>
+            <td><?= $producto['stock'] ?></td>
+            <td><?= $producto['valor_unitario'] ?></td>
+            <td>
+                <a href="editar_producto.php?codigo=<?= $producto['codigo'] ?>">Editar</a> |
+                <a href="eliminar_producto.php?codigo=<?= $producto['codigo'] ?>">Eliminar</a>
+            </td>
+        </tr>
+        <?php } ?>
+    </table>
+</body>
+</html>
