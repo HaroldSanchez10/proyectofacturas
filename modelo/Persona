@@ -1,46 +1,52 @@
 <?php
-class Persona {
-    private $codigo;
-    private $email;
-    private $nombre;
-    private $telefono;
+// Clase abstracta Persona
+abstract class Persona {
+    protected $codigo;
+    protected $nombre;
+    protected $email;
+    protected $telefono;
     
-    public function __construct($codigo, $email, $nombre, $telefono) {
+    public function __construct($codigo, $nombre, $email, $telefono) {
         $this->codigo = $codigo;
-        $this->email = $email;
         $this->nombre = $nombre;
+        $this->email = $email;
         $this->telefono = $telefono;
     }
-    
+
+    // Getters y Setters
     public function getCodigo() {
         return $this->codigo;
+    }
+
+    public function setCodigo($codigo) {
+        $this->codigo = $codigo;
+    }
+
+    public function getNombre() {
+        return $this->nombre;
+    }
+
+    public function setNombre($nombre) {
+        $this->nombre = $nombre;
     }
 
     public function getEmail() {
         return $this->email;
     }
 
-    public function getNombre() {
-        return $this->nombre;
-    }
-    
-    public function getTelefono() {
-        return $this->telefono;
-    }
-    
     public function setEmail($email) {
         $this->email = $email;
     }
-    
-    public function setNombre($nombre) {
-        $this->nombre = $nombre;
+
+    public function getTelefono() {
+        return $this->telefono;
     }
-    
+
     public function setTelefono($telefono) {
         $this->telefono = $telefono;
     }
-    
-    public function mostrarInformacion() {
-        return "Código: $this->codigo, Nombre: $this->nombre, Email: $this->email, Teléfono: $this->telefono";
-    }
+
+     // Método abstracto para obtener el tipo de persona
+    // Este método debe ser implementado por las clases que hereden de Persona
+    abstract public function obtenerTipo();
 }

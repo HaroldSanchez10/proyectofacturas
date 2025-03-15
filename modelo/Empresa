@@ -1,0 +1,40 @@
+<?php
+// Clase Empresa con relación de agregación con Cliente
+class Empresa {
+    private $codigo;
+    private $nombre;
+    private $clientes = [];
+    
+    public function __construct($codigo, $nombre) {
+        $this->codigo = $codigo;
+        $this->nombre = $nombre;
+    }
+
+    // Getters y Setters
+    public function getCodigo() {
+        return $this->codigo;
+    }
+
+    public function setCodigo($codigo) {
+        $this->codigo = $codigo;
+    }
+
+    public function getNombre() {
+        return $this->nombre;
+    }
+
+    public function setNombre($nombre) {
+        $this->nombre = $nombre;
+    }
+
+    // Método para agregar un cliente a la lista de clientes de la empresa
+    // Utiliza la relación de agregación, ya que un cliente puede estar asociado a varias empresas
+    public function agregarCliente(Cliente $cliente) {
+        $this->clientes[] = $cliente;
+    }
+ // Método para obtener todos los clientes de la empresa
+    public function getClientes() {
+        return $this->clientes;
+    }
+}
+?>

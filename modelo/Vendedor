@@ -1,0 +1,36 @@
+<?php
+// Clase Vendedor que hereda de Persona
+class Vendedor extends Persona {
+    private $carne;
+    private $direccion;
+    
+    public function __construct($codigo, $nombre, $email, $telefono, $carne, $direccion) {
+        parent::__construct($codigo, $nombre, $email, $telefono);
+        $this->carne = $carne;
+        $this->direccion = $direccion;
+    }
+
+    // Getters y Setters
+    public function getCarne() {
+        return $this->carne;
+    }
+
+    public function setCarne($carne) {
+        $this->carne = $carne;
+    }
+
+    public function getDireccion() {
+        return $this->direccion;
+    }
+
+    public function setDireccion($direccion) {
+        $this->direccion = $direccion;
+    }
+
+    // Método que retorna el tipo de persona (en este caso, "Vendedor")
+    public function obtenerTipo() {
+        return "Vendedor";
+    }
+}
+
+?>

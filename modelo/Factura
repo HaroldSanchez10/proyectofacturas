@@ -1,0 +1,55 @@
+<?php
+// Clase Factura con relación de composición con ProductosPorFactura
+class Factura {
+    private $fecha;
+    private $numero;
+    private $total;
+    private $productosPorFactura = [];
+    
+    public function __construct($fecha, $numero, $total) {
+        $this->fecha = $fecha;
+        $this->numero = $numero;
+        $this->total = $total;
+    }
+
+    // Getters y Setters
+    public function getFecha() {
+        return $this->fecha;
+    }
+
+    public function setFecha($fecha) {
+        $this->fecha = $fecha;
+    }
+
+    public function getNumero() {
+        return $this->numero;
+    }
+
+    public function setNumero($numero) {
+        $this->numero = $numero;
+    }
+
+    public function getTotal() {
+        return $this->total;
+    }
+
+    public function setTotal($total) {
+        $this->total = $total;
+    }
+
+
+    // Método para agregar un producto a la factura
+    // Crea un objeto ProductosPorFactura para almacenar el producto y su cantidad,
+    // y calcula el subtotal del producto (valorUnitario * cantidad)
+    public function agregarProducto(Producto $producto, $cantidad) {
+        $subtotal = $producto->getValorUnitario() * $cantidad;// Calcular el subtotal del producto
+        $this->productosPorFactura[] = new ProductosPorFactura($producto, $cantidad, $subtotal); // Agregar a la lista de productos de la factura
+    }
+
+
+    // Método para obtener todos los productos asociados a esta factura
+    public function getProductosPorFactura() {
+        return $this->productosPorFactura;
+    }
+}
+?>

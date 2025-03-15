@@ -1,0 +1,27 @@
+<?php
+// Clase Cliente que hereda de Persona
+class Cliente extends Persona {
+    private $credito;
+    
+    public function __construct($codigo, $nombre, $email, $telefono, $credito) {
+        parent::__construct($codigo, $nombre, $email, $telefono);// Llamada al constructor de la clase padre (Persona)
+        $this->credito = $credito;
+    }
+
+    // Getters y Setters
+    public function getCredito() {
+        return $this->credito;
+    }
+
+    public function setCredito($credito) {
+        $this->credito = $credito;
+    }
+
+
+    // Método para agregar un cliente a la lista de clientes de la empresa
+    // Utiliza la relación de agregación, ya que un cliente puede estar asociado a varias empresas
+    public function obtenerTipo() {
+        return "Cliente";
+    }
+}
+?>
